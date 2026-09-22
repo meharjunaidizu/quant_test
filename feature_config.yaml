@@ -1,0 +1,25 @@
+version: qmi-mbie-v1.0.0
+neutral_score: 50
+winsor: [0.02, 0.98]
+percentile_blend: {industry: 0.50, market_cap_bucket: 0.30, universe: 0.20}
+minimum_peer_count: 30
+components:
+  fundamental: {weight: 26, features: {revenue_growth_q_yoy: 2.5, ebitda_growth_q_yoy: 2, pat_growth_q_yoy: 2, eps_growth_q_yoy: 2, revenue_growth_accel_q: 2, ebitda_margin_change_q_yoy: 2.5, pat_growth_accel_q: 2, revenue_growth_ttm_yoy: 2.5, pat_growth_ttm_yoy: 2.5, revenue_growth_accel_ttm: 2, pat_growth_accel_ttm: 2, eps_cagr_3y: 2}}
+  quality: {weight: 18, features: {roce_ttm: 2.5, roce_change_yoy: 2, roe_ttm: 1.5, gross_profitability: 1.5, cfo_to_pat: 2.5, fcf_to_pat: 2, accrual_ratio: 2, net_debt_to_ebitda: 2, ccc_improvement: 2}}
+  momentum: {weight: 20, features: {market_rs_3m: 2, market_rs_6m: 2.5, market_rs_12m: 2.5, sector_rs_3m: 2, sector_rs_6m: 2, sector_rs_12m: 2, rs_acceleration: 2, vol_adjusted_momentum: 2, high_52w_proximity: 1.5, trend_structure: 1.5}}
+  runway: {weight: 10, features: {operating_leverage: 2.5, incremental_roic: 2, operating_kpi_growth: 2, operating_kpi_accel: 1.5, visibility_runway: 2}}
+  liquidity: {weight: 8, features: {rvol_expansion: 2, traded_value_expansion: 2, up_down_value_ratio: 2, illiquidity_improvement: 2}}
+  ownership: {weight: 5, features: {fpi_change_qoq: 1.5, dii_change_qoq: 1.5, promoter_change_yoy: 1, dilution_yoy: 1}}
+  valuation: {weight: 5, features: {fcf_yield: 1.5, growth_adjusted_ev_ebitda: 1.5, capital_productivity_3y: 2}}
+  governance: {weight: 8, features: {promoter_pledge_pct: 2, audit_filing_quality: 3, rpt_capital_action_quality: 3}}
+lower_is_better: [accrual_ratio, net_debt_to_ebitda, dilution_yoy, growth_adjusted_ev_ebitda, promoter_pledge_pct]
+pre_scored: [audit_filing_quality, rpt_capital_action_quality]
+adapters:
+  industrial:
+    kpi_by_industry: {CAPITAL_GOODS: order_book, DEFENCE: order_book, RETAIL: stores, EXCHANGE: transactions, DEPOSITORY: accounts, HOTELS: rooms, HOSPITALS: beds, MANUFACTURING: production_volume, AUTO: units, TELECOM: subscribers, CONSUMER: outlets}
+  bank_nbfc:
+    replacements: {revenue_growth_q_yoy: total_income_growth, ebitda_growth_q_yoy: ppop_growth, ebitda_margin_change_q_yoy: nim_change, roce_ttm: roa_ttm, gross_profitability: ppop_to_assets, cfo_to_pat: gnpa_improvement, fcf_to_pat: nnpa_improvement, accrual_ratio: credit_cost_improvement, net_debt_to_ebitda: cet1_crar_score, ccc_improvement: cost_income_improvement, operating_kpi_growth: advances_aum_growth, visibility_runway: deposit_franchise_growth}
+  insurer:
+    replacements: {revenue_growth_q_yoy: ape_growth, ebitda_growth_q_yoy: vnb_growth, ebitda_margin_change_q_yoy: vnb_margin_change, roce_ttm: roe_ttm, cfo_to_pat: persistency_score, fcf_to_pat: solvency_score, accrual_ratio: claims_or_combined_ratio_improvement, operating_kpi_growth: policy_ape_growth, visibility_runway: distribution_growth}
+hard_gates: [ADVERSE_AUDIT, DISCLAIMER_AUDIT, UNRESOLVED_DEFAULT, INSOLVENCY, TRADING_SUSPENSION, MATERIAL_FRAUD_FINDING, UNVERIFIABLE_FINANCIALS]
+
